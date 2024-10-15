@@ -146,9 +146,6 @@ st.line_chart(
 st.write(f"Final Training Accuracy: {selected_history['accuracy'][-1]:.4f}")
 st.write(f"Final Validation Accuracy: {selected_history['val_accuracy'][-1]:.4f}")
 
-test_index = st.sidebar.number_input(
-    "Enter index (0-9999)", min_value=0, max_value=9999, value=0
-)
 
 grid_size = 5
 
