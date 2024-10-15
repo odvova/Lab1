@@ -6,6 +6,7 @@ import os
 import json
 from sklearn.metrics import classification_report
 import matplotlib.pyplot as plt
+import random
 
 
 @st.cache_data
@@ -149,19 +150,33 @@ test_index = st.sidebar.number_input(
     "Enter index (0-9999)", min_value=0, max_value=9999, value=0
 )
 
-if st.sidebar.button("Classify Element"):
+grid_size = 5
+
+if st.sidebar.button("Display Random Image Grid"):
     model = create_model(model_choice)
     model.load_weights(f"{model_choice}_weights.h5")
-    test_image = x_test[test_index]
-    test_label = y_test[test_index]
-    test_image_reshaped = np.expand_dims(test_image, axis=0)
-    predictions = model.predict(test_image_reshaped)
-    predicted_class = np.argmax(predictions, axis=1)[0]
-    plt.imshow(test_image, cmap="gray")
-    plt.axis("off")
-    st.pyplot(plt)
-    st.write(f"Predicted Class: {class_names[predicted_class]}")
-    st.write(f"Actual Class: {class_names[test_label]}")
+
+    random_indices = random.sample(range(0, 10000), 20)
+
+    for i in range(0, 20, grid_size):
+        cols = st.columns(grid_size)
+
+        for j in range(grid_size):
+            idx = random_indices[i + j]
+            test_image = x_test[idx]
+            test_label = y_test[idx]
+            test_image_reshaped = np.expand_dims(test_image, axis=0)
+
+            predictions = model.predict(test_image_reshaped)
+            predicted_class = np.argmax(predictions, axis=1)[0]
+
+            with cols[j]:
+                st.image(
+                    test_image,
+                    caption=f"Actual: {class_names[test_label]}\nPredicted: {class_names[predicted_class]}",
+                    width=100,
+                    use_column_width=False,
+                )
 
 
 if st.sidebar.button("Classification Report"):
